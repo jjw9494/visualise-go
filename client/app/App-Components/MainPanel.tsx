@@ -18,9 +18,8 @@ import { Separator } from "@/components/ui/separator";
 import TableInputform from "./TableInputForm";
 import Graph from "./Graph";
 import { useState } from "react";
-import Image from "next/image";
-
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import GraphTypeSwitch from "./GraphTypeSwitch";
+import SortTypeSwitch from "./SortTypeSwitch";
 
 type Data = {
 	id: string;
@@ -36,14 +35,26 @@ type MainPanelProps = {
 	data: Data[];
 	handleUpdateTable: (arg0: string) => void;
 	selectedTable: any;
+	userId: string;
 };
 
 export default function MainPanel({
 	data,
 	handleUpdateTable,
 	selectedTable,
+	userId,
+	handleNewRow,
 }: MainPanelProps) {
 	const [switchValue, setSwitchValue] = useState<string>("line");
+	const [sort, setSort] = useState("default");
+
+	function handleSortType(sortType: string) {
+		setSort(sortType);
+	}
+
+	function handleSwitchValue(switchVal: string) {
+		setSwitchValue(switchVal);
+	}
 
 	return (
 		<div className="flex gap-12">
@@ -54,9 +65,12 @@ export default function MainPanel({
 				>
 					<ResizablePanel defaultSize={60}>
 						<div className="flex h-full items-center justify-center flex-col">
-
 							<div className="pr-8 pt-8 flex-1 w-full">
-								<Graph switchValue={switchValue} data={selectedTable}></Graph>
+								<Graph
+									switchValue={switchValue}
+									data={selectedTable}
+									sort={sort}
+								></Graph>
 							</div>
 							<Separator
 								orientation="horizontal"
@@ -64,45 +78,20 @@ export default function MainPanel({
 							></Separator>
 							<div className="flex justify-between py-4 w-full px-12">
 								<div className="h-1"></div>
-								<div className="flex item-center gap-2 justify-center">
-									<ToggleGroup
-										onValueChange={(e) => setSwitchValue(e)}
-										defaultValue="line"
-										type="single"
-									>
-										<ToggleGroupItem
-											value="line"
-											aria-label="Toggle line chart"
-											className="rounded-xl"
-										>
-											<Image
-												width={20}
-												height={20}
-												src="/images/line-chart.png"
-												alt="line chart icon"
-											></Image>
-										</ToggleGroupItem>
-										<ToggleGroupItem
-											value="bar"
-											aria-label="Toggle bar chart"
-											className="rounded-xl"
-										>
-											<Image
-												width={20}
-												height={20}
-												src="/images/bar-chart.png"
-												alt="bar chart icon"
-												className="mb-1"
-											></Image>
-										</ToggleGroupItem>
-									</ToggleGroup>
+								<div className="flex w-full item-between space-between gap-2 justify-between">
+									<SortTypeSwitch handleSortType={handleSortType} />
+									<GraphTypeSwitch handleSwitchValue={handleSwitchValue} />
 								</div>
 							</div>
 							<Separator
 								orientation="horizontal"
 								className="w-full"
 							></Separator>
-							<TableInputform data={selectedTable}></TableInputform>
+							<TableInputform
+								data={selectedTable}
+								userId={userId}
+								handleNewRow={handleNewRow}
+							></TableInputform>
 						</div>
 					</ResizablePanel>
 					<ResizableHandle withHandle />
@@ -110,7 +99,7 @@ export default function MainPanel({
 						<div className="flex h-full items-center justify-center">
 							<DataTable
 								columns={columns}
-								data={selectedTable.payload}
+								data={selectedTable?.payload}
 								tableHeaders={selectedTable}
 							></DataTable>
 						</div>

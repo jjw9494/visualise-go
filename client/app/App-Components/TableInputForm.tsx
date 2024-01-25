@@ -2,8 +2,100 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
+import { useState } from "react";
+import { toast } from "sonner";
+import { v4 as uuidv4 } from "uuid";
 
-export default function TableInputform({ data }) {
+type Data = {
+	id: string;
+	tableName: string;
+	name: string;
+
+	options: any;
+	payload: Object[];
+	entryRowName: string;
+	x: string;
+	y: string;
+};
+
+type TableInputProps = {
+	data: Data[];
+	userId: string;
+	tableId: string;
+	entryId: string;
+};
+
+export default function TableInputform({
+	data,
+	userId,
+	handleNewRow,
+}: TableInputProps) {
+	const [entryInput, setEntryInput] = useState<string>();
+	const [xInput, setXInput] = useState<string>();
+	const [yInput, setYInput] = useState<string>();
+
+	function handleEntryInput(e: any) {
+		setEntryInput(e.target.value);
+	}
+
+	function handleXInput(e: any) {
+		setXInput(e.target.value);
+	}
+
+	function handleYInput(e: any) {
+		setYInput(e.target.value);
+	}
+
+	async function createRow() {
+		let rowData = {
+			entryId: String(data.payload.length),
+			entryName: entryInput,
+			x: Number(xInput),
+			y: Number(yInput),
+		};
+
+		if (entryInput == undefined) {
+			return toast("Error", {
+				description: "Please input an entry name",
+			});
+		}
+
+		if (xInput == undefined) {
+			return toast("Error", {
+				description: "Please enter a valid input into the x-axis",
+			});
+		}
+
+		if (yInput == undefined) {
+			return toast("Error", {
+				description: "Please enter a valid input into the y-axis",
+			});
+		}
+
+		try {
+			let newRow = await fetch(
+				`http://localhost:8080/tables/${userId}/${data.id}`,
+				{
+					method: "POST",
+					mode: "cors",
+					headers: {
+						Accept: "application/json",
+						"Content-Type": "application/json;charset=UTF-8",
+					},
+					body: JSON.stringify(rowData),
+				}
+			);
+
+			await handleNewRow(rowData);
+			setEntryInput("");
+			setXInput("");
+			setYInput("");
+			return newRow.json();
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
 	return (
 		<div className="flex flex-col w-full place-self-end p-8">
 			<div className="grid w-full items-center gap-1.5">
@@ -12,21 +104,38 @@ export default function TableInputform({ data }) {
 					type="text"
 					id="entryname"
 					placeholder={`${data.entryRowName}`}
+					value={entryInput}
+					onChange={handleEntryInput}
 				/>
 			</div>
 
 			<div className="flex gap-4 py-4 w-full">
 				<div className="w-full">
-					<Label htmlFor="xaxis">{data.xAxisName}</Label>
-					<Input type="text" id="xaxis" placeholder={`${data.xAxisName}`} />
+					<Label htmlFor="xaxis">{data?.xAxisName}</Label>
+					<Input
+						type="number"
+						id="xaxis"
+						placeholder={`${data.xAxisName}`}
+						value={xInput}
+						onChange={handleXInput}
+					/>
 				</div>
 
 				<div className="w-full">
-					<Label htmlFor="yaxis">{data.yAxisName}</Label>
-					<Input type="text" id="yaxis" placeholder={`${data.yAxisName}`} />
+					<Label htmlFor="yaxis">{data?.yAxisName}</Label>
+					<Input
+						type="number"
+						id="yaxis"
+						placeholder={`${data.yAxisName}`}
+						value={yInput}
+						onChange={handleYInput}
+					/>
 				</div>
 			</div>
-			<Button className="flex self-center gap-4 rounded w-1/2">
+			<Button
+				className="flex self-center gap-4 rounded w-1/2"
+				onClick={() => createRow()}
+			>
 				Create New Item
 				<Image
 					alt="add icon"

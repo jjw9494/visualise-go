@@ -20,8 +20,6 @@ export type graphData = {
 	options: any;
 };
 
-console.log(this);
-
 export const columns: ColumnDef<graphData>[] = [
 	{
 		accessorKey: "entryName",
