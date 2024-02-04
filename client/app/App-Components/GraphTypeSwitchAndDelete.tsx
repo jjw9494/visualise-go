@@ -29,7 +29,7 @@ export default function GraphTypeSwitchAndDelete({
 			<ToggleGroupItem
 				value={GraphType.Line}
 				aria-label="Toggle line chart"
-				className="rounded-xl"
+				className="rounded"
 			>
 				<Image
 					width={20}
@@ -41,7 +41,7 @@ export default function GraphTypeSwitchAndDelete({
 			<ToggleGroupItem
 				value={GraphType.Bar}
 				aria-label="Toggle bar chart"
-				className="rounded-xl"
+				className="rounded"
 			>
 				<Image
 					width={20}
@@ -53,7 +53,7 @@ export default function GraphTypeSwitchAndDelete({
 			</ToggleGroupItem>
 			<Dialog open={open} onOpenChange={setOpen}>
 				<DialogTrigger asChild>
-					<Button variant="destructive" className="ml-4 rounded-xl">
+					<Button variant="destructive" className="ml-4 rounded">
 						<Image
 							width={20}
 							height={20}

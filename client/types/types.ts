@@ -23,7 +23,7 @@ export type Payload = {
 	x?: number;
 	y?: number;
 	length?: () => number;
-	map?: () => any;
+	map: () => any;
 	sort?: () => any;
 };
 

@@ -12,21 +12,21 @@ export default function SortTypeSwitch({ handleSortType }: SortTypeSwitchProps) 
 			<ToggleGroupItem
 				value={SortType.Asc}
 				aria-label="Toggle line chart"
-				className="rounded-xl"
+				className="rounded"
 			>
 				ASC
 			</ToggleGroupItem>
 			<ToggleGroupItem
 				value={SortType.Desc}
 				aria-label="Toggle line chart"
-				className="rounded-xl"
+				className="rounded"
 			>
 				DESC
 			</ToggleGroupItem>
 			<ToggleGroupItem
 				value={SortType.Date}
 				aria-label="Toggle line chart"
-				className="rounded-xl"
+				className="rounded"
 			>
 				DATE
 			</ToggleGroupItem>
