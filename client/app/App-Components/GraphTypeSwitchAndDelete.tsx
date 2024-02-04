@@ -9,25 +9,25 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useState } from "react";
+import { GraphTypeSwitchAndDeleteProps } from "@/types/types";
+import { GraphType } from "@/types/enums";
 
 export default function GraphTypeSwitchAndDelete({
-	handleSwitchValue,
+	handleGraphType,
 	handleDeleteTable,
-}) {
-	const [open, setOpen] = useState(false);
+}: GraphTypeSwitchAndDeleteProps) {
+	const [open, setOpen] = useState<boolean>(false);
 
 	return (
 		<ToggleGroup
-			onValueChange={(e) => handleSwitchValue(e)}
-			defaultValue="line"
+			onValueChange={(e) => handleGraphType(e)}
+			defaultValue={GraphType.Line}
 			type="single"
 		>
 			<ToggleGroupItem
-				value="line"
+				value={GraphType.Line}
 				aria-label="Toggle line chart"
 				className="rounded-xl"
 			>
@@ -39,7 +39,7 @@ export default function GraphTypeSwitchAndDelete({
 				></Image>
 			</ToggleGroupItem>
 			<ToggleGroupItem
-				value="bar"
+				value={GraphType.Bar}
 				aria-label="Toggle bar chart"
 				className="rounded-xl"
 			>

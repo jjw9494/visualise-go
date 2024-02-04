@@ -1,36 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { TableInputFormProps } from "@/types/types";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
-import { v4 as uuidv4 } from "uuid";
 
-type Data = {
-	id: string;
-	tableId: string;
-	tableName: string;
-	name: string;
-	options: any;
-	payload: Object[];
-	entryRowName: string;
-	x: string;
-	y: string;
-};
-
-type TableInputProps = {
-	data: Data[];
-	userId: string;
-	tableId: string;
-	entryId: string;
-};
-
-export default function TableInputform({
-	data,
+export default function TableInputForm({
 	userId,
 	handleNewRow,
 	selectedTable,
-}: TableInputProps) {
+}: TableInputFormProps) {
 	const [entryInput, setEntryInput] = useState<string>();
 	const [xInput, setXInput] = useState<string>();
 	const [yInput, setYInput] = useState<string>();
@@ -49,7 +29,7 @@ export default function TableInputform({
 
 	async function createRow() {
 		let rowData = {
-			entryId: String(data.payload.length),
+			entryId: String(selectedTable.payload.length),
 			entryName: entryInput,
 			x: Number(xInput),
 			y: Number(yInput),
@@ -74,24 +54,7 @@ export default function TableInputform({
 		}
 
 		try {
-			let newRow = await fetch(
-				`http://localhost:8080/tables/${userId}/${data.id}`,
-				{
-					method: "POST",
-					mode: "cors",
-					headers: {
-						Accept: "application/json",
-						"Content-Type": "application/json;charset=UTF-8",
-					},
-					body: JSON.stringify(rowData),
-				}
-			);
-
-			await handleNewRow(rowData);
-			// setEntryInput(undefined);
-			// setXInput(undefined);
-			// setYInput(undefined);
-			return newRow.json();
+			handleNewRow(rowData, userId, selectedTable.id);
 		} catch (error) {
 			console.log(error);
 		}
@@ -100,11 +63,11 @@ export default function TableInputform({
 	return (
 		<div className="flex flex-col w-full place-self-end p-8">
 			<div className="grid w-full items-center gap-1.5">
-				<Label htmlFor="entryname">{data.entryRowName}</Label>
+				<Label htmlFor="entryname">{selectedTable.entryRowName}</Label>
 				<Input
 					type="text"
 					id="entryname"
-					placeholder={`${data.entryRowName}`}
+					placeholder={`${selectedTable.entryRowName}`}
 					value={entryInput}
 					onChange={handleEntryInput}
 					className="rounded"
@@ -113,11 +76,11 @@ export default function TableInputform({
 
 			<div className="flex gap-4 py-4 w-full">
 				<div className="w-full">
-					<Label htmlFor="xaxis">{data?.xAxisName}</Label>
+					<Label htmlFor="xaxis">{selectedTable?.xAxisName}</Label>
 					<Input
 						type="number"
 						id="xaxis"
-						placeholder={`${data.xAxisName}`}
+						placeholder={`${selectedTable.xAxisName}`}
 						value={xInput}
 						onChange={handleXInput}
 						className="rounded"
@@ -125,11 +88,11 @@ export default function TableInputform({
 				</div>
 
 				<div className="w-full">
-					<Label htmlFor="yaxis">{data?.yAxisName}</Label>
+					<Label htmlFor="yaxis">{selectedTable?.yAxisName}</Label>
 					<Input
 						type="number"
 						id="yaxis"
-						placeholder={`${data.yAxisName}`}
+						placeholder={`${selectedTable.yAxisName}`}
 						value={yInput}
 						onChange={handleYInput}
 						className="rounded"

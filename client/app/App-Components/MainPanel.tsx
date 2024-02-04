@@ -12,34 +12,23 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { columns } from "./columns";
-import { DataTable } from "./data-table";
 import { Separator } from "@/components/ui/separator";
-import TableInputform from "./TableInputForm";
+import TableInputForm from "./TableInputForm";
 import Graph from "./Graph";
-import { useState } from "react";
+import {
+	JSXElementConstructor,
+	Key,
+	PromiseLikeOfReactNode,
+	ReactElement,
+	ReactNode,
+	ReactPortal,
+	useState,
+} from "react";
 import GraphTypeSwitchAndDelete from "./GraphTypeSwitchAndDelete";
 import SortTypeSwitch from "./SortTypeSwitch";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import TablePanel from "./TablePanel";
-
-type Data = {
-	id: string;
-	tableName: string;
-	name: string;
-	x: number;
-	y: number;
-	options: any;
-	payload: object[];
-};
-
-type MainPanelProps = {
-	data: Data[];
-	handleUpdateTable: (arg0: string) => void;
-	selectedTable: any;
-	userId: string;
-};
+import { MainPanelProps } from "@/types/types";
+import { GraphType, SortType } from "@/types/enums";
 
 export default function MainPanel({
 	data,
@@ -51,15 +40,15 @@ export default function MainPanel({
 	handleDeleteRow,
 	handleEditRow,
 }: MainPanelProps) {
-	const [switchValue, setSwitchValue] = useState<string>("line");
-	const [sort, setSort] = useState("default");
+	const [graphType, setGraphType] = useState("line")
+	const [sortType, setSortType] = useState("date");
 
-	function handleSortType(sortType: string) {
-		setSort(sortType);
+	function handleSortType(sortType: SortType | string) {
+		setSortType(sortType);
 	}
 
-	function handleSwitchValue(switchVal: string) {
-		setSwitchValue(switchVal);
+	function handleGraphType(switchVal: GraphType | string) {
+		setGraphType(switchVal);
 	}
 
 	return (
@@ -73,9 +62,9 @@ export default function MainPanel({
 						<div className="flex h-full items-center justify-center flex-col">
 							<div className="pr-8 pt-8 flex-1 w-full">
 								<Graph
-									switchValue={switchValue}
-									data={selectedTable}
-									sort={sort}
+									graphType={graphType}
+									selectedTable={selectedTable}
+									sortType={sortType}
 								></Graph>
 							</div>
 							<Separator
@@ -88,7 +77,7 @@ export default function MainPanel({
 									<SortTypeSwitch handleSortType={handleSortType} />
 									<GraphTypeSwitchAndDelete
 										handleDeleteTable={handleDeleteTable}
-										handleSwitchValue={handleSwitchValue}
+										handleGraphType={handleGraphType}
 									/>
 								</div>
 							</div>
@@ -96,22 +85,16 @@ export default function MainPanel({
 								orientation="horizontal"
 								className="w-full"
 							></Separator>
-							<TableInputform
-								data={selectedTable}
+							<TableInputForm
+								selectedTable={selectedTable}
 								userId={userId}
 								handleNewRow={handleNewRow}
-							></TableInputform>
+							></TableInputForm>
 						</div>
 					</ResizablePanel>
 					<ResizableHandle withHandle />
 					<ResizablePanel defaultSize={40}>
 						<div className="flex h-full items-center justify-center">
-							{/* <DataTable
-							handleDeleteRow={handleDeleteRow}
-								columns={columns}
-								data={selectedTable?.payload}
-								tableHeaders={selectedTable}
-							></DataTable> */}
 							<TablePanel
 								handleEditRow={handleEditRow}
 								selectedTable={selectedTable}
@@ -131,8 +114,8 @@ export default function MainPanel({
 						<SelectValue placeholder={selectedTable.tableName} />
 					</SelectTrigger>
 					<SelectContent className="min-h-[726px] shadow-std rounded bg-black">
-						{data.map((x) => (
-							<SelectItem key={x.id} value={x.id}>
+						{data.map((x: { id: string; tableName: string }) => (
+							<SelectItem key={x.id} value={String(x.id)}>
 								<div className="flex w-[300px] justify-between">
 									{x.tableName}
 								</div>

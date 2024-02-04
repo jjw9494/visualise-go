@@ -23,18 +23,19 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { TablePanelProps, HeaderProps, RowProps, Payload } from "@/types/types";
 
 export default function TablePanel({
 	selectedTable,
 	handleDeleteRow,
 	handleEditRow,
-}) {
+}: TablePanelProps) {
 	return (
 		<div className="flex-col w-full h-full items-start justify-start">
 			<Header
 				rowName={selectedTable.entryRowName}
-				xAxis={selectedTable.xAxisName}
-				yAxis={selectedTable.yAxisName}
+				xAxisName={selectedTable.xAxisName}
+				yAxisName={selectedTable.yAxisName}
 			/>
 			<Separator />
 			<ScrollArea className=" h-[732px]  rounded-md border">
@@ -55,12 +56,12 @@ export default function TablePanel({
 	);
 }
 
-function Header({ rowName, xAxis, yAxis }) {
+function Header({ rowName, xAxisName, yAxisName }: HeaderProps) {
 	return (
 		<div className="flex w-full h-8 mx-4 my-2 items-center justify-center brightness-[.6]">
 			<p className="w-[40%]">{rowName}</p>
-			<p className="w-[25%]">{xAxis}</p>
-			<p className="w-[25%]">{yAxis}</p>
+			<p className="w-[25%]">{xAxisName}</p>
+			<p className="w-[25%]">{yAxisName}</p>
 			<div className="w-[10%]"></div>
 		</div>
 	);
@@ -74,13 +75,13 @@ function Row({
 	handleDeleteRow,
 	selectedTable,
 	handleEditRow,
-}) {
+}: RowProps) {
 	const [triggerEditDeleteInfo, setTriggerEditDeleteInfo] = useState<string>();
 	const [menuOpen, setMenuOpen] = useState<boolean>(false);
 	const [editEntryNameValue, setEditEntryNameValue] =
 		useState<string>(entryName);
-	const [editXAxisValue, setEditXAxisValue] = useState<number>(xAxisRow);
-	const [editYAxisValue, setEditYAxisValue] = useState<number>(yAxisRow);
+	const [editXAxisValue, setEditXAxisValue] = useState<string>(xAxisRow);
+	const [editYAxisValue, setEditYAxisValue] = useState<string>(yAxisRow);
 	const [updateObject, setUpdateObject] = useState({
 		entryId: entryId,
 		entryName: editEntryNameValue,
@@ -192,7 +193,9 @@ function Row({
 											id="xAxis"
 											placeholder={`${selectedTable.xAxisName}`}
 											value={editXAxisValue}
-											onChange={(e) => setEditXAxisValue(e.target.value)}
+											onChange={(e: React.FormEvent<HTMLInputElement>) =>
+												setEditXAxisValue(e.currentTarget.value)
+											}
 											className="rounded"
 										/>
 									</div>
@@ -203,7 +206,9 @@ function Row({
 											id="yAxis"
 											placeholder={`${selectedTable.yAxisName}`}
 											value={editYAxisValue}
-											onChange={(e) => setEditYAxisValue(e.target.value)}
+											onChange={(e: React.FormEvent<HTMLInputElement>) =>
+												setEditYAxisValue(e.currentTarget.value)
+											}
 											className="rounded"
 										/>
 									</div>
@@ -272,10 +277,3 @@ function Row({
 		</div>
 	);
 }
-
-// entryId
-// entryName
-// x
-// y
-// <Image alt="x" width={15} height={15} src="/images/delete-icon.png" />
-// <Image alt="x" width={15} height={15} src="/images/edit-icon.png" />

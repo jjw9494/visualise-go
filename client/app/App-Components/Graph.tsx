@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import { GraphProps, Payload } from "@/types/types";
 import {
 	BarChart,
 	Bar,
@@ -11,33 +11,34 @@ import {
 	Tooltip,
 	ResponsiveContainer,
 } from "recharts";
+import { SortType, GraphType } from "@/types/enums";
 
-type Data = {
-	id: string;
-	tableName: string;
-	name: string;
-	x: number;
-	y: number;
-	options: any;
-	payload: object[];
-};
-
-export default function Graph({ data, switchValue, sort }) {
-	if (sort === "date") {
-		data.payload = [...data.payload.sort((a, b) => a.entryId - b.entryId)];
-	} else if (sort === "asc") {
-		data.payload = [...data.payload.sort((a, b) => a.y - b.y)];
-	} else if (sort === "desc") {
-		data.payload = [...data.payload.sort((a, b) => b.y - a.y)];
+export default function Graph({
+	selectedTable,
+	graphType,
+	sortType,
+}: GraphProps) {
+	if (sortType === SortType.Date) {
+		selectedTable.payload = [
+			...selectedTable.payload.sort((a: any, b: any) => a.entryId - b.entryId),
+		];
+	} else if (sortType === SortType.Asc) {
+		selectedTable.payload = [
+			...selectedTable.payload.sort((a: any, b: any) => a.y - b.y),
+		];
+	} else if (sortType === SortType.Desc) {
+		selectedTable.payload = [
+			...selectedTable.payload.sort((a: any, b: any) => b.y - a.y),
+		];
 	}
 
 	return (
 		<ResponsiveContainer width="100%" height="100%">
-			{switchValue === "bar" ? (
+			{graphType === GraphType.Bar ? (
 				<BarChart
 					width={500}
 					height={300}
-					data={data.payload}
+					data={selectedTable.payload}
 					margin={{
 						top: 10,
 						right: 10,
@@ -67,7 +68,7 @@ export default function Graph({ data, switchValue, sort }) {
 				<LineChart
 					width={500}
 					height={300}
-					data={data.payload}
+					data={selectedTable.payload}
 					margin={{
 						top: 10,
 						right: 10,

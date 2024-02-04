@@ -1,29 +1,30 @@
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import Image from "next/image";
+import { SortType } from "@/types/enums";
+import { SortTypeSwitchProps } from "@/types/types";
 
-export default function SortTypeSwitch({ handleSortType }) {
+export default function SortTypeSwitch({ handleSortType }: SortTypeSwitchProps) {
 	return (
 		<ToggleGroup
 			onValueChange={(e) => handleSortType(e)}
-			defaultValue="date"
+			defaultValue={SortType.Date}
 			type="single"
 		>
 			<ToggleGroupItem
-				value="asc"
+				value={SortType.Asc}
 				aria-label="Toggle line chart"
 				className="rounded-xl"
 			>
 				ASC
 			</ToggleGroupItem>
 			<ToggleGroupItem
-				value="desc"
+				value={SortType.Desc}
 				aria-label="Toggle line chart"
 				className="rounded-xl"
 			>
 				DESC
 			</ToggleGroupItem>
 			<ToggleGroupItem
-				value="date"
+				value={SortType.Date}
 				aria-label="Toggle line chart"
 				className="rounded-xl"
 			>

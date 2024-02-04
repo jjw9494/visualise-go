@@ -3,7 +3,6 @@
 import Nav from "../App-Components/Nav";
 import MainPanel from "../App-Components/MainPanel";
 import { Ovo } from "next/font/google";
-// import data from "@/mockData.json";
 import CreateNewTable from "../App-Components/CreateNewTable";
 import { useEffect, useState } from "react";
 import defaultData from "../../defaultData.json";
@@ -39,12 +38,38 @@ export default function Dashboard() {
 		fetchUserObject();
 	}, []);
 
-	async function handleNewTable(tableData: any) {
+	useEffect(() => {
+		setSelectedTable(data[data.length - 1]);
+	}, [data]);
+
+	async function handleNewTable(
+		tableData: any,
+		tableObject: any,
+		userId: string
+	) {
 		setData([...data, tableData.tableData]);
-		setSelectedTable(tableData.tableData);
+		await fetch(`http://localhost:8080/tables/${userId}`, {
+			method: "POST",
+			mode: "cors",
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json;charset=UTF-8",
+			},
+			body: JSON.stringify(tableObject),
+		});
 	}
 
-	function handleNewRow(rowData: any) {
+	async function handleNewRow(rowData: any, userId: string, tableId: string) {
+		await fetch(`http://localhost:8080/tables/${userId}/${tableId}`, {
+			method: "POST",
+			mode: "cors",
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json;charset=UTF-8",
+			},
+			body: JSON.stringify(rowData),
+		});
+
 		setSelectedTable({
 			...selectedTable,
 			payload: [...selectedTable.payload, rowData],
@@ -57,7 +82,7 @@ export default function Dashboard() {
 	}
 
 	async function handleEditRow(
-		entryId,
+		entryId: string,
 		updateObject: {
 			entryId: string;
 			entryName: string;

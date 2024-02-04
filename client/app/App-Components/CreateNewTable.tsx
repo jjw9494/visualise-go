@@ -1,52 +1,57 @@
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
-	DialogClose,
 	DialogContent,
 	DialogDescription,
-	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { CreateNewTableProps, UserTables } from "@/types/types";
 import Image from "next/image";
-import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export default function CreateNewTable({ userId, data, handleNewTable }) {
+export default function CreateNewTable({
+	userId,
+	data,
+	handleNewTable,
+}: CreateNewTableProps) {
 	const [tableName, setTableName] = useState<string>();
 	const [entryName, setEntryName] = useState<string>();
 	const [xName, setXName] = useState<string>();
 	const [yName, setYName] = useState<string>();
 	const [menuOpen, setMenuOpen] = useState<boolean>(false);
 
-	function handleTableNameInput(e: any) {
-		setTableName(e.target.value);
+	function handleTableNameInput(e: React.FormEvent<HTMLInputElement>) {
+		setTableName(e.currentTarget.value);
 	}
 
-	function handleEntryNameInput(e: any) {
-		setEntryName(e.target.value);
+	function handleEntryNameInput(e: React.FormEvent<HTMLInputElement>) {
+		setEntryName(e.currentTarget.value);
 	}
 
-	function handleXNameInput(e: any) {
-		setXName(e.target.value);
+	function handleXNameInput(e: React.FormEvent<HTMLInputElement>) {
+		setXName(e.currentTarget.value);
 	}
 
-	function handleYNameInput(e: any) {
-		setYName(e.target.value);
+	function handleYNameInput(e: React.FormEvent<HTMLInputElement>) {
+		setYName(e.currentTarget.value);
 	}
 
 	async function createTable() {
-		let tableData = {
+		let tableData: UserTables = {
 			id: String(data.length),
 			tableName: tableName,
 			entryRowName: entryName,
 			xAxisName: xName,
 			yAxisName: yName,
 			payload: [],
+			length: function (length: any): unknown {
+				throw new Error("Function not implemented.");
+			},
 		};
 
 		if (tableName == undefined) {
@@ -74,24 +79,32 @@ export default function CreateNewTable({ userId, data, handleNewTable }) {
 		}
 
 		try {
-			let newRow = await fetch(`http://localhost:8080/tables/${userId}`, {
-				method: "POST",
-				mode: "cors",
-				headers: {
-					Accept: "application/json",
-					"Content-Type": "application/json;charset=UTF-8",
-				},
-				body: JSON.stringify(tableData),
-			});
-
-			// await handleNewRow(rowData);
-			setTableName("");
-			setEntryName("");
-			setXName("");
-			setYName("");
+			setTableName(undefined);
+			setEntryName(undefined);
+			setXName(undefined);
+			setYName(undefined);
 			setMenuOpen(false);
-			await handleNewTable({ tableData });
-			return newRow.json();
+			handleNewTable(
+				{
+					tableData,
+					length: function (length: any): unknown {
+						throw new Error("Function not implemented.");
+					},
+					id: "",
+					tableName: undefined,
+					entryRowName: undefined,
+					xAxisName: undefined,
+					yAxisName: undefined,
+					payload: {
+						entryId: "",
+						entryName: "",
+						x: 0,
+						y: 0,
+					},
+				},
+				tableData,
+				userId
+			);
 		} catch (error) {
 			console.log(error);
 		}
@@ -190,12 +203,6 @@ export default function CreateNewTable({ userId, data, handleNewTable }) {
 							<span>Cancel</span>
 						</Button>
 					</div>
-					{/* <DialogFooter className="sm:justify-start">
-						<DialogClose
-							asChild
-							onClick={() => setMenuOpen(false)}
-						></DialogClose>
-					</DialogFooter> */}
 				</DialogContent>
 			</Dialog>
 		</div>
