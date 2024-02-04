@@ -47,7 +47,7 @@ export default function Graph({ data, switchValue, sort }) {
 				>
 					<XAxis dataKey="x" />
 					<YAxis />
-					<Tooltip
+					{/* <Tooltip
 						wrapperStyle={{
 							padding: "5px",
 							width: 120,
@@ -56,7 +56,7 @@ export default function Graph({ data, switchValue, sort }) {
 							opacity: "0.80",
 							borderRadius: "5px",
 						}}
-					/>
+					/> */}
 					<Bar
 						dataKey="y"
 						fill="#DC2626"
@@ -77,7 +77,7 @@ export default function Graph({ data, switchValue, sort }) {
 				>
 					<XAxis dataKey="x" />
 					<YAxis dataKey="y" />
-					<Tooltip
+					{/* <Tooltip
 						wrapperStyle={{
 							padding: "5px",
 							width: 120,
@@ -86,7 +86,7 @@ export default function Graph({ data, switchValue, sort }) {
 							opacity: "0.80",
 							borderRadius: "5px",
 						}}
-					/>
+					/> */}
 
 					<Line
 						type="monotone"

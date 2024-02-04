@@ -24,7 +24,6 @@ export const userIdJWT = "1";
 export default function Dashboard() {
 	const [data, setData] = useState<any>(defaultData.data.data.userTables);
 	const [selectedTable, setSelectedTable] = useState<Data>(data[0]);
-
 	const [userId, setUserId] = useState<string>(userIdJWT);
 
 	async function fetchUserObject() {
@@ -45,9 +44,53 @@ export default function Dashboard() {
 		setSelectedTable(tableData.tableData);
 	}
 
-	async function handleUpdateTable(tableId: string) {
+	function handleNewRow(rowData: any) {
+		setSelectedTable({
+			...selectedTable,
+			payload: [...selectedTable.payload, rowData],
+		});
+	}
+
+	async function handleUpdateSelectedTable(tableId: string) {
 		const foundTable = data.find((x: any) => x.id === tableId);
 		setSelectedTable(foundTable || data[data.length - 1]);
+	}
+
+	async function handleEditRow(
+		entryId,
+		updateObject: {
+			entryId: string;
+			entryName: string;
+			x: number;
+			y: number;
+		}
+	) {
+		try {
+			await fetch(
+				`http://localhost:8080/tables/${userId}/${selectedTable.id}/${entryId}`,
+				{
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(updateObject),
+				}
+			);
+			let updatedPayload = selectedTable.payload;
+
+			for (let i = 0; i < updatedPayload.length; i++) {
+				if (updatedPayload[i].entryId === entryId) {
+					updatedPayload[i] = updateObject;
+				}
+			}
+
+			setSelectedTable({
+				...selectedTable,
+				payload: updatedPayload,
+			});
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	async function handleDeleteTable() {
@@ -76,13 +119,6 @@ export default function Dashboard() {
 		);
 	}
 
-	function handleNewRow(rowData: any) {
-		setSelectedTable({
-			...selectedTable,
-			payload: [...selectedTable.payload, rowData],
-		});
-	}
-
 	return (
 		<>
 			<Nav></Nav>
@@ -100,12 +136,13 @@ export default function Dashboard() {
 				<div className="pt-4">
 					<MainPanel
 						data={data}
-						handleUpdateTable={handleUpdateTable}
+						handleUpdateSelectedTable={handleUpdateSelectedTable}
 						selectedTable={selectedTable}
 						userId={userId}
 						handleNewRow={handleNewRow}
 						handleDeleteTable={handleDeleteTable}
 						handleDeleteRow={handleDeleteRow}
+						handleEditRow={handleEditRow}
 					></MainPanel>
 				</div>
 			</main>

@@ -107,6 +107,7 @@ export default function TableInputform({
 					placeholder={`${data.entryRowName}`}
 					value={entryInput}
 					onChange={handleEntryInput}
+					className="rounded"
 				/>
 			</div>
 
@@ -119,6 +120,7 @@ export default function TableInputform({
 						placeholder={`${data.xAxisName}`}
 						value={xInput}
 						onChange={handleXInput}
+						className="rounded"
 					/>
 				</div>
 
@@ -130,6 +132,7 @@ export default function TableInputform({
 						placeholder={`${data.yAxisName}`}
 						value={yInput}
 						onChange={handleYInput}
+						className="rounded"
 					/>
 				</div>
 			</div>

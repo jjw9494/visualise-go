@@ -16,11 +16,7 @@ import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export default function CreateNewTable({
-	userId,
-	data,
-	handleNewTable,
-}) {
+export default function CreateNewTable({ userId, data, handleNewTable }) {
 	const [tableName, setTableName] = useState<string>();
 	const [entryName, setEntryName] = useState<string>();
 	const [xName, setXName] = useState<string>();
@@ -94,7 +90,7 @@ export default function CreateNewTable({
 			setXName("");
 			setYName("");
 			setMenuOpen(false);
-			await handleNewTable({tableData});
+			await handleNewTable({ tableData });
 			return newRow.json();
 		} catch (error) {
 			console.log(error);
@@ -118,7 +114,7 @@ export default function CreateNewTable({
 						></Image>
 					</Button>
 				</DialogTrigger>
-				<DialogContent className="sm:max-w-md bg-black">
+				<DialogContent className="sm:max-w-md bg-black rounded-xl">
 					<DialogHeader>
 						<DialogTitle>Create New Table</DialogTitle>
 						<DialogDescription>
@@ -136,6 +132,7 @@ export default function CreateNewTable({
 									placeholder="Table Name"
 									value={tableName}
 									onChange={handleTableNameInput}
+									className="rounded"
 								/>
 							</div>
 
@@ -147,6 +144,7 @@ export default function CreateNewTable({
 									placeholder="Entry Name"
 									value={entryName}
 									onChange={handleEntryNameInput}
+									className="rounded"
 								/>
 							</div>
 
@@ -158,6 +156,7 @@ export default function CreateNewTable({
 									placeholder="X Axis"
 									value={xName}
 									onChange={handleXNameInput}
+									className="rounded"
 								/>
 							</div>
 
@@ -169,12 +168,13 @@ export default function CreateNewTable({
 									placeholder="Y Axis"
 									value={yName}
 									onChange={handleYNameInput}
+									className="rounded"
 								/>
 							</div>
 						</div>
 						<Button
 							type="submit"
-							className=" mb-4 self-center w-full"
+							className=" mb-4 self-center w-full rounded"
 							onClick={() => {
 								createTable();
 							}}
@@ -183,9 +183,9 @@ export default function CreateNewTable({
 						</Button>
 						<Button
 							type="button"
-							className="px-3 self-center w-full"
+							className="px-3 self-center w-full rounded"
 							onClick={() => setMenuOpen(false)}
-							variant="outline"
+							variant="ghost"
 						>
 							<span>Cancel</span>
 						</Button>

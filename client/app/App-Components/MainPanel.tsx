@@ -43,12 +43,13 @@ type MainPanelProps = {
 
 export default function MainPanel({
 	data,
-	handleUpdateTable,
+	handleUpdateSelectedTable,
 	selectedTable,
 	userId,
 	handleNewRow,
 	handleDeleteTable,
 	handleDeleteRow,
+	handleEditRow,
 }: MainPanelProps) {
 	const [switchValue, setSwitchValue] = useState<string>("line");
 	const [sort, setSort] = useState("default");
@@ -111,7 +112,11 @@ export default function MainPanel({
 								data={selectedTable?.payload}
 								tableHeaders={selectedTable}
 							></DataTable> */}
-							<TablePanel selectedTable={selectedTable} />
+							<TablePanel
+								handleEditRow={handleEditRow}
+								selectedTable={selectedTable}
+								handleDeleteRow={handleDeleteRow}
+							/>
 						</div>
 					</ResizablePanel>
 				</ResizablePanelGroup>{" "}
@@ -119,7 +124,7 @@ export default function MainPanel({
 			<div>
 				<Select
 					onValueChange={(e: any) => {
-						handleUpdateTable(e);
+						handleUpdateSelectedTable(e);
 					}}
 				>
 					<SelectTrigger className="w-[320px] border-none">

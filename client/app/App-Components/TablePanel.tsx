@@ -14,13 +14,21 @@ import {
 	Dialog,
 	DialogContent,
 	DialogDescription,
+	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
-export default function TablePanel({ selectedTable }) {
+export default function TablePanel({
+	selectedTable,
+	handleDeleteRow,
+	handleEditRow,
+}) {
 	return (
 		<div className="flex-col w-full h-full items-start justify-start">
 			<Header
@@ -37,6 +45,9 @@ export default function TablePanel({ selectedTable }) {
 						entryName={entryName}
 						xAxisRow={x}
 						yAxisRow={y}
+						handleDeleteRow={handleDeleteRow}
+						selectedTable={selectedTable}
+						handleEditRow={handleEditRow}
 					/>
 				))}
 			</ScrollArea>
@@ -55,52 +66,208 @@ function Header({ rowName, xAxis, yAxis }) {
 	);
 }
 
-function Row({ entryId, entryName, xAxisRow, yAxisRow }) {
+function Row({
+	entryId,
+	entryName,
+	xAxisRow,
+	yAxisRow,
+	handleDeleteRow,
+	selectedTable,
+	handleEditRow,
+}) {
+	const [triggerEditDeleteInfo, setTriggerEditDeleteInfo] = useState<string>();
+	const [menuOpen, setMenuOpen] = useState<boolean>(false);
+	const [editEntryNameValue, setEditEntryNameValue] =
+		useState<string>(entryName);
+	const [editXAxisValue, setEditXAxisValue] = useState<number>(xAxisRow);
+	const [editYAxisValue, setEditYAxisValue] = useState<number>(yAxisRow);
+	const [updateObject, setUpdateObject] = useState({
+		entryId: entryId,
+		entryName: editEntryNameValue,
+		x: Number(editXAxisValue),
+		y: Number(editYAxisValue),
+	});
+
+	useEffect(() => {
+		setEditEntryNameValue(entryName);
+		setEditXAxisValue(xAxisRow);
+		setEditYAxisValue(yAxisRow);
+		setUpdateObject({
+			entryId: entryId,
+			entryName: editEntryNameValue,
+			x: Number(editXAxisValue),
+			y: Number(editYAxisValue),
+		});
+	}, [selectedTable]);
+
+	useEffect(() => {
+		setUpdateObject({
+			entryId: entryId,
+			entryName: editEntryNameValue,
+			x: Number(editXAxisValue),
+			y: Number(editYAxisValue),
+		});
+	}, [editEntryNameValue, editXAxisValue, editYAxisValue]);
+
 	return (
-		<div
-			key={entryId}
-			className="flex flex-row w-full h-8 m-4 font-[200] justify-center items-center"
-		>
-			<p className="w-[40%]">{entryName}</p>
-			<p className="w-[25%]">{xAxisRow}</p>
-			<p className="w-[25%]">{yAxisRow}</p>
-			<div className="w-[10%] min-w-8">
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button variant="ghost" className="h-4 w-4 p-0">
-							<span className="sr-only">Open menu</span>
-							<DotsHorizontalIcon className="h-4 w-4" />
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end" className="rounded">
-						<DropdownMenuLabel>Actions</DropdownMenuLabel>
-						<DropdownMenuSeparator />
-						<DropdownMenuItem onClick={() => alert("Edit " + entryId)}>
-							<div className="flex flex-row w-full justify-between items-center">
-								Edit
-								<Image
-									alt="x"
-									width={15}
-									height={15}
-									className="h-4 w-4"
-									src="/images/edit-icon.png"
-								/>
-							</div>
-						</DropdownMenuItem>
-						<DropdownMenuItem onClick={() => alert("Delete " + entryId)}>
-							<div className="flex flex-row w-full justify-between items-center">
-								Delete
-								<Image
-									alt="x"
-									width={15}
-									height={15}
-									className="h-4 w-4"
-									src="/images/delete-icon.png"
-								/>
-							</div>
-						</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
+		<div key={entryId} className="hover:bg-neutral-900 h-full">
+			<div className="flex flex-row w-full h-8 font-[200] justify-center items-center m-4">
+				<p className="w-[40%]">{entryName}</p>
+				<p className="w-[25%]">{xAxisRow}</p>
+				<p className="w-[25%]">{yAxisRow}</p>
+				<div className="w-[10%] min-w-8">
+					<Dialog open={menuOpen}>
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<Button variant="ghost" className="h-4 w-4 p-0">
+									<span className="sr-only">Open menu</span>
+									<DotsHorizontalIcon className="h-4 w-4" />
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align="end" className="rounded">
+								<DropdownMenuLabel>Actions</DropdownMenuLabel>
+								<DropdownMenuSeparator />
+								<DialogTrigger asChild>
+									<DropdownMenuItem
+										onClick={() => {
+											setTriggerEditDeleteInfo("edit"), setMenuOpen(true);
+										}}
+									>
+										<div className="flex flex-row w-full justify-between items-center">
+											Edit
+											<Image
+												alt="x"
+												width={15}
+												height={15}
+												className="h-4 w-4"
+												src="/images/edit-icon.png"
+											/>
+										</div>
+									</DropdownMenuItem>
+								</DialogTrigger>
+								<DialogTrigger asChild>
+									<DropdownMenuItem
+										onClick={() => {
+											setTriggerEditDeleteInfo("delete"), setMenuOpen(true);
+										}}
+									>
+										<div className="flex flex-row w-full justify-between items-center">
+											Delete
+											<Image
+												alt="x"
+												width={15}
+												height={15}
+												className="h-4 w-4"
+												src="/images/delete-icon.png"
+											/>
+										</div>
+									</DropdownMenuItem>
+								</DialogTrigger>
+							</DropdownMenuContent>
+						</DropdownMenu>
+						{triggerEditDeleteInfo === "edit" ? (
+							<DialogContent className="bg-black rounded max-w-[400px]">
+								<DialogHeader>
+									<DialogTitle>Edit</DialogTitle>
+									<DialogDescription>Edit row entry below.</DialogDescription>
+								</DialogHeader>
+								<div className="flex flex-col gap-4">
+									<div className="w-full">
+										<Label htmlFor="entryname">
+											{selectedTable.entryRowName}
+										</Label>
+										<Input
+											type="text"
+											id="entryname"
+											placeholder={`${selectedTable.entryRowName}`}
+											value={editEntryNameValue}
+											onChange={(e) => setEditEntryNameValue(e.target.value)}
+											className="rounded"
+										/>
+									</div>
+									<div className="w-full">
+										<Label htmlFor="xAxis">{selectedTable.xAxisName}</Label>
+										<Input
+											type="number"
+											id="xAxis"
+											placeholder={`${selectedTable.xAxisName}`}
+											value={editXAxisValue}
+											onChange={(e) => setEditXAxisValue(e.target.value)}
+											className="rounded"
+										/>
+									</div>
+									<div className="w-full">
+										<Label htmlFor="yAxis">{selectedTable.yAxisName}</Label>
+										<Input
+											type="number"
+											id="yAxis"
+											placeholder={`${selectedTable.yAxisName}`}
+											value={editYAxisValue}
+											onChange={(e) => setEditYAxisValue(e.target.value)}
+											className="rounded"
+										/>
+									</div>
+								</div>
+								<DialogFooter className="w-full">
+									<div className="flex flex-col w-full gap-4">
+										<Button
+											type="submit"
+											className="rounded"
+											onClick={() => {
+												handleEditRow(entryId, updateObject),
+													setMenuOpen(false);
+											}}
+										>
+											Confirm
+										</Button>
+										<Button
+											variant="ghost"
+											type="submit"
+											className="rounded w-full"
+											onClick={() => {
+												setMenuOpen(false);
+											}}
+										>
+											Cancel
+										</Button>
+									</div>
+								</DialogFooter>
+							</DialogContent>
+						) : (
+							<DialogContent className="bg-black rounded w-[300px] flex flex-col">
+								<DialogHeader>
+									<DialogTitle>Are you sure?</DialogTitle>
+									<DialogDescription>
+										This action cannot be undone.
+									</DialogDescription>
+								</DialogHeader>
+								<DialogFooter className="w-full">
+									<div className="w-full flex flex-col gap-4">
+										<Button
+											type="submit"
+											className="rounded w-full"
+											onClick={() => {
+												handleDeleteRow(entryId), setMenuOpen(false);
+											}}
+										>
+											Delete Row
+										</Button>
+										<Button
+											variant="ghost"
+											type="submit"
+											className="rounded w-full"
+											onClick={() => {
+												setMenuOpen(false);
+											}}
+										>
+											Cancel
+										</Button>
+									</div>
+								</DialogFooter>
+							</DialogContent>
+						)}
+					</Dialog>
+				</div>
 			</div>
 		</div>
 	);
