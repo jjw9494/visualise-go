@@ -16,7 +16,11 @@ import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export default function CreateNewTable({ userId, data }) {
+export default function CreateNewTable({
+	userId,
+	data,
+	handleNewTable,
+}) {
 	const [tableName, setTableName] = useState<string>();
 	const [entryName, setEntryName] = useState<string>();
 	const [xName, setXName] = useState<string>();
@@ -46,6 +50,7 @@ export default function CreateNewTable({ userId, data }) {
 			entryRowName: entryName,
 			xAxisName: xName,
 			yAxisName: yName,
+			payload: [],
 		};
 
 		if (tableName == undefined) {
@@ -88,6 +93,8 @@ export default function CreateNewTable({ userId, data }) {
 			setEntryName("");
 			setXName("");
 			setYName("");
+			setMenuOpen(false);
+			await handleNewTable({tableData});
 			return newRow.json();
 		} catch (error) {
 			console.log(error);
@@ -169,7 +176,7 @@ export default function CreateNewTable({ userId, data }) {
 							type="submit"
 							className=" mb-4 self-center w-full"
 							onClick={() => {
-								createTable(), setMenuOpen(false);
+								createTable();
 							}}
 						>
 							<span>Submit</span>

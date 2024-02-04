@@ -8,9 +8,9 @@ import { v4 as uuidv4 } from "uuid";
 
 type Data = {
 	id: string;
+	tableId: string;
 	tableName: string;
 	name: string;
-
 	options: any;
 	payload: Object[];
 	entryRowName: string;
@@ -29,6 +29,7 @@ export default function TableInputform({
 	data,
 	userId,
 	handleNewRow,
+	selectedTable,
 }: TableInputProps) {
 	const [entryInput, setEntryInput] = useState<string>();
 	const [xInput, setXInput] = useState<string>();
@@ -87,9 +88,9 @@ export default function TableInputform({
 			);
 
 			await handleNewRow(rowData);
-			setEntryInput("");
-			setXInput("");
-			setYInput("");
+			// setEntryInput(undefined);
+			// setXInput(undefined);
+			// setYInput(undefined);
 			return newRow.json();
 		} catch (error) {
 			console.log(error);

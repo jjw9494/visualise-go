@@ -18,8 +18,11 @@ import { Separator } from "@/components/ui/separator";
 import TableInputform from "./TableInputForm";
 import Graph from "./Graph";
 import { useState } from "react";
-import GraphTypeSwitch from "./GraphTypeSwitch";
+import GraphTypeSwitchAndDelete from "./GraphTypeSwitchAndDelete";
 import SortTypeSwitch from "./SortTypeSwitch";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import TablePanel from "./TablePanel";
 
 type Data = {
 	id: string;
@@ -44,6 +47,8 @@ export default function MainPanel({
 	selectedTable,
 	userId,
 	handleNewRow,
+	handleDeleteTable,
+	handleDeleteRow,
 }: MainPanelProps) {
 	const [switchValue, setSwitchValue] = useState<string>("line");
 	const [sort, setSort] = useState("default");
@@ -80,7 +85,10 @@ export default function MainPanel({
 								<div className="h-1"></div>
 								<div className="flex w-full item-between space-between gap-2 justify-between">
 									<SortTypeSwitch handleSortType={handleSortType} />
-									<GraphTypeSwitch handleSwitchValue={handleSwitchValue} />
+									<GraphTypeSwitchAndDelete
+										handleDeleteTable={handleDeleteTable}
+										handleSwitchValue={handleSwitchValue}
+									/>
 								</div>
 							</div>
 							<Separator
@@ -97,11 +105,13 @@ export default function MainPanel({
 					<ResizableHandle withHandle />
 					<ResizablePanel defaultSize={40}>
 						<div className="flex h-full items-center justify-center">
-							<DataTable
+							{/* <DataTable
+							handleDeleteRow={handleDeleteRow}
 								columns={columns}
 								data={selectedTable?.payload}
 								tableHeaders={selectedTable}
-							></DataTable>
+							></DataTable> */}
+							<TablePanel selectedTable={selectedTable} />
 						</div>
 					</ResizablePanel>
 				</ResizablePanelGroup>{" "}
@@ -118,7 +128,9 @@ export default function MainPanel({
 					<SelectContent className="min-h-[726px] shadow-std rounded bg-black">
 						{data.map((x) => (
 							<SelectItem key={x.id} value={x.id}>
-								{x.tableName}
+								<div className="flex w-[300px] justify-between">
+									{x.tableName}
+								</div>
 							</SelectItem>
 						))}
 					</SelectContent>

@@ -16,24 +16,23 @@ type Data = {
 	entryRowName: string;
 	xAxisName: string;
 	yAxisName: string;
-	payload: { entryName: string; x: number; y: number }[];
+	payload: { entryId: string; entryName: string; x: number; y: number }[];
 };
+
+export const userIdJWT = "1";
 
 export default function Dashboard() {
 	const [data, setData] = useState<any>(defaultData.data.data.userTables);
 	const [selectedTable, setSelectedTable] = useState<Data>(data[0]);
 
-	const [userId, setUserId] = useState<string>("1");
-
-	let userObject: any;
+	const [userId, setUserId] = useState<string>(userIdJWT);
 
 	async function fetchUserObject() {
 		let fetchUserObject = await fetch(`http://localhost:8080/tables/${userId}`);
 		let userObject = await fetchUserObject.json();
 		if (userObject) {
-			setData(userObject.data.data.userTables);
-			setSelectedTable(data[0]);
-			console.log(selectedTable, " setter");
+			setData(await userObject.data.data.userTables);
+			setSelectedTable(await data[0]);
 		}
 	}
 
@@ -41,10 +40,40 @@ export default function Dashboard() {
 		fetchUserObject();
 	}, []);
 
-	console.log(selectedTable, " table");
+	async function handleNewTable(tableData: any) {
+		setData([...data, tableData.tableData]);
+		setSelectedTable(tableData.tableData);
+	}
 
-	function handleUpdateTable(tableId: string) {
-		setSelectedTable(data.find((x: any) => x.id === tableId) || data[0]);
+	async function handleUpdateTable(tableId: string) {
+		const foundTable = data.find((x: any) => x.id === tableId);
+		setSelectedTable(foundTable || data[data.length - 1]);
+	}
+
+	async function handleDeleteTable() {
+		await fetch(`http://localhost:8080/tables/${userId}/${selectedTable.id}`, {
+			method: "DELETE",
+		});
+		setData(data.filter((x: any) => x.id !== selectedTable.id));
+		setSelectedTable(data[0]);
+	}
+
+	async function handleDeleteRow(rowId: string) {
+		let updatedPayload = selectedTable.payload.filter(
+			(x: any) => x.entryId != rowId
+		);
+
+		setSelectedTable({
+			...selectedTable,
+			payload: [...updatedPayload],
+		});
+
+		await fetch(
+			`http://localhost:8080/tables/${userId}/${selectedTable.id}/${rowId}`,
+			{
+				method: "DELETE",
+			}
+		);
 	}
 
 	function handleNewRow(rowData: any) {
@@ -62,7 +91,11 @@ export default function Dashboard() {
 					<h1 className={`text-[#FFF5EE] text-6xl ${ovo.className}`}>
 						{selectedTable?.tableName}
 					</h1>
-					<CreateNewTable userId={userId} data={data} />
+					<CreateNewTable
+						userId={userId}
+						data={data}
+						handleNewTable={handleNewTable}
+					/>
 				</div>
 				<div className="pt-4">
 					<MainPanel
@@ -71,6 +104,8 @@ export default function Dashboard() {
 						selectedTable={selectedTable}
 						userId={userId}
 						handleNewRow={handleNewRow}
+						handleDeleteTable={handleDeleteTable}
+						handleDeleteRow={handleDeleteRow}
 					></MainPanel>
 				</div>
 			</main>

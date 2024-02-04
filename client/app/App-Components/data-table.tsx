@@ -19,21 +19,27 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import { DataTableRowActions } from "./data-table-row-actions";
+import { Button } from "@/components/ui/button";
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[] & { payload: TData[] };
+	handleDeleteRow: (string) => void;
 }
 
 export function DataTable<TData, TValue>({
 	columns,
 	data,
+	handleDeleteRow,
 }: DataTableProps<TData, TValue>) {
 	const table = useReactTable({
 		data,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
 	});
+
+	console.log(table);
 
 	return (
 		<div className="rounded-md border w-full">
@@ -66,11 +72,14 @@ export function DataTable<TData, TValue>({
 									data-state={row.getIsSelected() && "selected"}
 								>
 									{row.getVisibleCells().map((cell) => (
-										<TableCell key={cell.id}>
-											{flexRender(
-												cell.column.columnDef.cell,
-												cell.getContext()
-											)}
+										<TableCell
+											// onClick={(e) => console.log(e.target.entryid)}
+											key={cell.id}
+										>
+											{flexRender(cell.column.columnDef.cell, {
+												...cell.getContext(),
+												handleDeleteRow,
+											})}
 										</TableCell>
 									))}
 								</TableRow>
@@ -88,6 +97,7 @@ export function DataTable<TData, TValue>({
 					</TableBody>
 				</ScrollArea>
 			</Table>
+			<Button onClick={() => handleDeleteRow(20)} />
 		</div>
 	);
 }
