@@ -26,6 +26,7 @@ export default function Dashboard() {
 	const [userId, setUserId] = useState<string>(userIdJWT);
 
 	async function fetchUserObject() {
+		
 		let fetchUserObject = await fetch(`http://localhost:8080/tables/${userId}`);
 		let userObject = await fetchUserObject.json();
 		if (userObject) {

@@ -60,7 +60,7 @@ export default function Home() {
 			<div className="w-1/2 h-screen">
 				<div className="absolute right-[64px] top-[36px]">
 					<Link href="/create-account">
-						<Button variant="outline" className="flex-end">
+						<Button variant="outline" className="flex-end rounded">
 							Create Account
 						</Button>
 					</Link>
